@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>The Star Helper</title>
+		<link rel="icon" href="./TheStarFavicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="./TheStarFavicon.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<h1>Toronto Star - Nuisance Popup Remover</h1>
+		<p>Drag the link below into your bookmarks.  When the Toronto Star popup appears, just click this bookmark and it will remove it.</p>
+		<a title='Drag me into your bookmarks!' style='border:1px solid #505050;padding:10px; background-color:#b0b0b0; color:#3040ff' href="javascript:var badEl1 = document.getElementById('syncronexOverlayContent');
+				var badEl1 = document.getElementById('syncronexOverlayContent');
+			var badEl2 = document.getElementById('syncronexOverlay');
+			if (badEl1 == null || badEl2 == null) {
+				alert('Couldn\'t find the Star popup!');
+			}
+			else {
+				badEl1.parentNode.removeChild(badEl1);
+				badEl2.parentNode.removeChild(badEl2);	
+			}">TheStarPopupRemover</a>
+	</body>
+	<script type='text/javascript'>
+		function doIt() {
+			var badEl1 = document.getElementById('syncronexOverlayContent');
+			var badEl2 = document.getElementById('syncronexOverlay');
+			if (badEl1 == null || badEl2 == null) {
+				alert('Couldn\'t find the Star popup!');
+			}
+			else {
+				badEl1.parentNode.removeChild(badEl1);
+				badEl2.parentNode.removeChild(badEl2);	
+			}
+				
+		}
+		
+	</script>
+</html>

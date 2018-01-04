@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<head>
+	<title>TortoiseSVN log to CSV converter</title>
+	<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<style type='text/css'>
+		
+		/* elements */
+		h1,h2,h3,h4,h5,label,p,td,th,input, li {font-family:Century Gothic,sans-serif}
+		h1 { margin-bottom:10px;margin-top:20px}
+		table { border-collapse:collapse; width:100%}
+		td { vertical-align:top}
+		td, th, li { font-size: 0.8em}
+	 	td, th { border: 1px solid #a0a0a0; padding:4px; background-color:#fbfbfb}
+		td p, td ul { margin: 0}
+		th { background-color: #F0F0F0 }
+		textarea { font-family: "courier new"; color:black; width:100%}
+		
+		input.btn, label, input[type=checkbox] { color: #606060; font-size:0.7em }
+		input.btn { background-color:#F1FAF0; border:1px solid #c0c0c0; padding:6px;}
+		input.btn:hover { background-color:#fafffa}
+		input.btn:active { background-color:#eaeaea; }
+
+		/* specific */
+		#divMain { margin:90px;margin-top:0;margin-bottom:0;padding:30px; background-color:#F5F3E9;min-width:250px}
+		td.late, td.logerror { background-color: #FC8B8B}
+		td.ontime { background-color: #D4FAD2}
+		div#divErr { padding:20px; border:1px solid #404040;display:none; }
+		div#divErr label {color: red;}
+		div.section { width:750px;max-width:95%}
+		div.controls { margin-bottom:5px;}
+		div.controls .inner { margin-left:10px}
+		
+		@media print {
+			#divMain { margin:5px; padding:0}
+			td, th, li { font-size:0.5em; padding:2px}
+			#divMain .noprint {display:none}
+		}
+	</style>
+</head>
+<body>
+	<div id='divMain'>
+		<h1 class='noprint'>TortoiseSVN Logs to CSV</h1>
+		<p class='noprint'>This hastily put-together page will convert Tortoise SVN log items to csv or HTML format.  The html output is formatted to hide the input boxes and buttons during printing.</p>
+		<h4 class='noprint'>Input:</h4>
+		<input type='button' class='btn noprint' id='btnSeeExample' value='Show an example (click again to revert back)' title='This will clear the input box; click again to revert back' />
+		<textarea id='txtInput' class='noprint' rows="30"></textarea>
+		<h4 class='noprint'>Output:</h4>
+		<input type='button' class='btn noprint' id='btnConvertToCsv' value='Convert to CSV' />
+		<input type='button' class='btn noprint' id='btnViewInTable' value='View in a nice html format' />
+		<!-- <input type='checkbox' id='chkInclFilesInTable' checked='checked' /> -->
+		<!-- <label for='chkInclFilesInTable'>Include files in table cells</label> -->
+		<h5>Revisions:</h5>
+		<textarea id='txtOutputCsv' class='noprint' rows="30"></textarea>
+		<div id='divOutputTable'></div>
+		<h5>Changed files:</h5>
+		<textarea id='txtOutputFiles' class='noprint' rows="10"></textarea>
+		<ul id='ulFileList' ></ul>
+	</div>
+</body>
+<script type='text/javascript'>
+	var tblButtonText1 = 'View in a nice html format';
+	
+	$(function() {	
+		$('#btnSeeExample').click(function() {
+			var txtInput = $('#txtInput');
+			if (oldInput !== '') {
+				txtInput.val(oldInput);
+				oldInput = '';
+			}
+			else {
+				oldInput = txtInput.val();
+				txtInput.val(sampleInput);
+			}
+		});
+		
+		$('#btnConvertToCsv').click(function() {
+			convertToCsv($('#txtInput').val());
+			$('#txtOutputCsv, #txtOutputFiles').show();
+			$('#divOutputTable, #ulFileList').hide();
+		});
+		
+		$('#btnViewInTable').click(function() {
+			// var includeFiles = $('#chkInclFilesInTable').prop('checked');
+			convertToHtmlTable($('#txtInput').val(), false);
+			$('#txtOutputCsv, #txtOutputFiles').hide();
+			$('#divOutputTable, #ulFileList').show();
+		})
+
+	});
+	
+	function convertToCsv(input) {
+		var lines = input.split('\n');
+		var files = new Array();
+		var row = '', rows = '', nextLineIsMsg = false;
+		for(var i = 0; i < lines.length; i++) {
+			var line = lines[i];
+			if (line.substr(0,8) === "Revision") {
+			    row = '"' + line.substr(10,10) + '"';
+			}
+			else if (line.substr(0,6) === "Author") {
+	    		row = row + ',"' + line.substr(8,50) + '"';
+			}
+			else if (line.substr(0,4) === "Date") {
+	    		row = row + ',"' + line.substr(6,200) + '"';
+			}
+			else if (line.substr(0,11) === "Modified : ") {
+				var val = line.substr(11,500);
+				if (!arrayContains(files,val)) {
+					files.push(val);
+				}
+			}
+			else if (line.substr(0,8) === "Message:") {
+		 		nextLineIsMsg = true	
+			}
+			else if (nextLineIsMsg) {
+			    nextLineIsMsg = false
+			    row = row + ',"' + line.replace(/"/g, '""') + '"' 
+			    rows = rows + row + "\n"
+			}
+		}
+		
+		$('#txtOutputCsv').val(rows);
+		$('#txtOutputFiles').val(arrayToString(files.sort()));
+	}
+	
+	function arrayContains(arr, val) {
+		for(var i = 0; i < arr.length; i++) {
+			if (arr[i] === val) return true;
+		}
+		return false;
+	}
+	
+	function arrayToString(arr) {
+		var val = '';
+		for(var i = 0; i < arr.length; i++) {
+			val += arr[i] + "\n";
+		}
+		return val;
+	}
+	
+	function convertToHtmlTable(input, inclFiles) {
+		debugger;
+		var lines = input.split('\n');
+		var files = new Array();
+		var divTable = $('#divOutputTable');
+		divTable.html('');
+		if (lines.length === 0 || (lines.length === 1 && lines[0] === ""))  {
+			return;
+		}
+		var row = '', result = '', nextLineIsMsg = false;
+		result += '<table><th>Revision</th><th>Author</th><th>Date</th><th>Message</th>';
+		for(var i = 0; i < lines.length; i++) {
+			var line = lines[i];
+			if (line.substr(0,8) === "Revision") {
+			    row = '<tr><td>' + line.substr(10,10) + '</td>';
+			}
+			else if (line.substr(0,6) === "Author") {
+	    		row = row + '<td>' + line.substr(8,50) + '</td>';
+			}
+			else if (line.substr(0,4) === "Date") {
+	    		row = row + '<td>' + line.substr(6,200) + '</td>';
+			}
+			else if (line.substr(0,11) === "Modified : ") {
+				var val = line.substr(11,500);
+				if (!arrayContains(files,val)) {
+					files.push(val);
+				}
+			}
+			else if (line.substr(0,8) === "Message:") {
+		 		nextLineIsMsg = true	
+			}
+			else if (nextLineIsMsg) {
+				var ulFiles = '';
+				if (inclFiles) {
+					ulFiles = '<ul>';
+					for(var j = 0; j < files.length; j++) {
+						ulFiles += '<li>' + files[j] + '</li>';
+					}
+					ulFiles += '</ul>';
+					files = [];
+				}
+			    nextLineIsMsg = false
+				debugger;
+			    row = row + '<td><p>' + line + '</p>'+ulFiles+'</td></tr>'; 
+			    result = result + row
+			}
+		}
+		result += '</table>';
+		divTable.append(result);
+
+		files.sort();
+		for(var i = 0; i < files.length; i++) {
+			$('#ulFileList').append('<li>'+files[i]+'</li>');
+		}
+	}
+	
+	
+	var sampleInput = 'Revision: 124374\nAuthor: jmair\nDate: Saturday, June 29, 2013 4:01:33 PM\nMessage:\nModified behavior of "blah", blah, and more \'blah\'.\n----\nModified : /file1.cs\nModified : /file2.cs\n\nRevision: 124373\nAuthor: jmair\nDate: Saturday, June 29, 2013 4:00:01 PM\nMessage:\nSome message....\n----\nModified : /file1.cs\nModified : /file2.cs'
+	var oldInput = '';
+</script>

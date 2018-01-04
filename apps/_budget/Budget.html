@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Budget</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Jeff Mair">
+	<!-- Date: 2013-06-11 -->
+	<style type='text/css'>
+		div.selection {float:left; margin-right:15px}
+		div.selection select, div.selection input { display:block }
+		div.allSelections { background-color: #f6eed5;padding:20px;}
+		div.selectRecentEntry { margin-top:20px; display:block }
+		#txtAmount { width:70px}
+		#txtDescription { width:200px}
+		#ddlRecentEntries { min-width:200px}
+		#btnSubmit { background-color:#F2F5E1;display:block;width:100px;height:40px; font-size:1.2em; margin-top:20px; float:right}
+		#divContainer { border:1px solid #e0e0e0;padding:10px}
+		#divTabs { margin-top:100px; }
+		#divContainer, #divTabs { width: 700px; margin-left:auto;margin-right:auto}
+		div.tab { width:80px; padding:8px; background-color:#faf5da; float:left; margin-right:5px;}
+		div.tab:hover {cursor:pointer}
+		body { color: #707070; font-family:Arial}
+
+		@media screen and (max-device-width: 480px) {
+			body { color: #606060 }
+			#divTabs { margin-top:0px; }
+			div.tab { width:120px; margin-right:20px}
+		  	#divContainer, #divTabs { width:100%}
+			div.selection { margin-bottom:20px; min-height:110px;}
+			select, input { font-size:2em}
+			label { font-size: 2.2em}
+			div.selection select, div.selection input, #txtDescription, #txtAmount  { width: 300px}
+			#txtAmount { width: 270px}
+			#txtDescription { width: 585px}			
+			#ddlRecentEntries { width:400px}
+			#btnSubmit { float:none; font-size:2em; width:250px; height:100px}
+			#divContainer, #divTabs {width:100%}
+			#ddlRecentEntries { display: block; width: 620px}
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+<body>
+	<div id='divTabs'>
+		<div id='tabSubmit' class='tab'><label>Submit</label></div>
+		<div id='tabView' class='tab'><label>View</label></div>
+		<div style='clear:both'></div>
+	</div>
+	<div id='divContainer'>
+		<div id='divSubmitExpense'>
+			<h2>Enter the details of an expense:</h2>
+			<div class='allSelections'>
+				<div class='selection'>
+					<label>Year</label>
+					<select id='ddlYear'>
+						<option>2013</option>
+					</select>
+				</div>
+				<div class='selection'>
+					<label>Month</label>
+					<select id='ddlMonth'>
+						<option>January</option>
+						<option>February</option>
+						<option>March</option>
+						<option>April</option>
+						<option>May</option>
+						<option>June</option>
+						<option>July</option>
+						<option>August</option>
+						<option>September</option>
+						<option>October</option>
+						<option>November</option>
+						<option>December</option>
+					</select>
+				</div>
+				<div class='selection'>
+					<label>Category</label>
+					<select id='ddlCategory'>
+						<option value='food'>Food</option>
+						<option value='alcohol'>Alcohol</option>
+					</select>
+				</div>
+				<div class='selection'>
+					<label>Amount ($)</label>
+					<input type='text' id='txtAmount' />
+				</div>
+				<div class='selection'>
+					<label>Description</label>
+					<input type='text' id='txtDescription' />
+				</div>
+				<div style='clear:both'></div>
+				<div class='selectRecentEntry'>
+					<label>Or select a recent entry:</label>
+					<select id='ddlRecentEntries'><option>-</option></select>
+				</div>
+				<input id='btnSubmit' value='Submit!' type='button' />
+				<div style='clear:both'></div>
+			</div>
+		</div>
+		<div id='divViewExpenses' style='display:none'>
+			<h2>Most Recent Expenses:</h2>
+			<div class='allSelections'>
+				<div>
+				<div class='selection'>
+					<label>Year</label>
+					<select id='ddlYear'>
+						<option>2013</option>
+					</select>
+				</div>
+				<div class='selection'>
+					<label>Month</label>
+					<select id='ddlMonth'>
+						<option>January</option>
+						<option>February</option>
+						<option>March</option>
+						<option>April</option>
+						<option>May</option>
+						<option>June</option>
+						<option>July</option>
+						<option>August</option>
+						<option>September</option>
+						<option>October</option>
+						<option>November</option>
+						<option>December</option>
+					</select>
+				</div>
+				<div class='selection'>
+					<label>Category</label>
+					<select id='ddlCategory'>
+						<option>Food</option>
+						<option>Alcohol</option>
+					</select>
+				</div>
+				<div style='clear:both'></div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type='text/javascript'>
+
+	$('#btnSubmit').click(function() {
+		
+		/* submit values to the service */
+		var year = $('#ddlYear').val();
+		var month = $('#ddlMonth').val();
+		var category = $('#ddlCategory').val();
+		var amt = $('#txtAmount').val();
+		var desc = $('#txtDescription').val();
+		
+		$.ajax({
+		    type: "POST",
+		    url: "/WebApps/_budget/Service.php",
+		    data: { "Method": "submit" },
+		    contentType: "application/json; charset=utf-8",
+		    dataType: "json",
+		    success: function(data){alert(data);},
+		    failure: function(errMsg) {
+		        alert(errMsg);
+		    }
+		});
+		
+	});
+
+	$('#tabSubmit').click(function() {
+		$('#divViewExpenses').hide();
+		$('#divSubmitExpense').show();
+	});
+	
+	$('#tabView').click(function() {
+		$('#divViewExpenses').show();
+		$('#divSubmitExpense').hide();
+	});
+</script>
+</html>

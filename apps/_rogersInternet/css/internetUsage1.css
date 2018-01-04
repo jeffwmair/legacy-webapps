@@ -1,0 +1,104 @@
+body { background-color: #eff0e3;margin:0}
+td,th,h1,h2,h3,h4,h5,h6,label,li,p {padding:0;margin:0;font-family:Helvetica;color:#404040}
+li, label, td, th,p {font-size:0.8em}
+li > a { font-size:1em}
+li {padding-left:0}
+ul{padding-left:20px;list-style-type: square}
+a { font-family:Helvetica}
+h1 {padding:15px;padding-left:0;}
+h5 { margin-bottom:10px}
+div.info_section { margin-top: 25px }
+div.info_section.first { margin-top:0}
+body > div 
+{ 
+	margin-left:auto;margin-right:auto;	height: auto;
+}
+div#header 
+{ 
+	height:auto; 
+	margin-bottom:20px; 
+	background-color: #f0f0f3;
+	border-bottom:3px solid #d0d0d0;
+}
+div#header h1 { margin-left:30%}
+div.middleContent, div.leftContent
+{ 
+	 -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
+	background-color:white;
+	margin-bottom:30px;
+	padding:2%;
+	border: 1px solid #d0d0d0;
+}
+div.middleContent 
+{
+	width:70%;
+	margin-right:2%;
+	overflow:hidden;
+}
+div.leftContent 
+{ 
+	float:left; 
+	width:15%;
+	margin-left:2%;
+	margin-right:2%;
+	height:800px;
+}
+div.middleContent h4, div.leftContent h4 { margin-bottom:15px;}
+div#divForceRefresh { display:none }
+
+
+div#monthTimeProgress,div#monthDataProgress { max-width:100%;border:1px solid #a0a0a0;background-color:#f5f5f5}
+div#monthTimeProgress {margin-bottom:20px}
+div.progress { padding-left:0px; padding-top:15px; height:35px}
+label.progress {margin-left:5px}
+
+table { border-collapse: collapse;}
+table#tblMonthly th, table#tblMonthly { text-align:center}
+table#tblMonthly { width: 100% }
+th { padding:10px; background-color:#d0d0d0;}
+td
+{ 
+/*	border: 1px solid #808080; 
+	border-left:0;border-right:0;*/
+	padding-left:10px;
+	padding-right:10px; 
+	padding-top:5px; 
+	padding-bottom:5px; 
+	background-color:#e5eae5
+}
+
+tr.rowMonth td { font-size:0.9em; }
+tr.rowDay td { background-color: white; font-size:0.7em; color:#606060; border:0 }
+tr.rowMonth td { cursor:pointer;margin-bottom:250px}
+tr.rowMonth { border:1px solid #808080;border-left:0;border-right:0}
+tr.rowMonth:hover { border:1px solid black; border-left:0;border-right:0}
+tr.warning td { background-color:yellow}
+.note { color:#905050; font-size:0.7em}
+
+div.warningBackground{background-color:#ffff60}
+div.okayBackground{background-color:#80E080}
+div.extraCostBackground{background-color:#ff8080;}
+
+@media only screen and (max-width:560px), (min-device-width:320px) and (max-device-width:480px) {
+	div.leftContent { display:none}
+	div#divForceRefresh { display: block }
+	div.middleContent { margin-left: 2%; width: 92%}
+	div#header h1 { margin-left:5%}
+}
+
+@media only screen and (min-device-width:320px) and (max-device-width:480px) {
+	li, label, td, th,p {font-size:1.3em}
+	tr.rowMonth td { font-size: 1.6em;}
+	tr.rowDay td { font-size:1.2em; }
+	.note { font-size:1.3em}
+}
+
+@media only screen and (orientation:portrait) and (min-device-width:320px) and (max-device-width:480px) {
+	li, label, td, th,p {font-size:1.8em}
+	tr.rowMonth td { font-size: 2em;}
+	tr.rowDay td { font-size:1.9em; }
+	.note { font-size:2em}
+}

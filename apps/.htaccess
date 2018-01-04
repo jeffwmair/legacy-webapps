@@ -1,0 +1,6 @@
+<files "Monitor.php">
+	AuthType Basic
+	AuthName "Restricted Files"
+	# AuthUserFile /home/content/23/9942823/html/jefftron/passwords/.htpasswd
+	# Require valid-user
+</files>
